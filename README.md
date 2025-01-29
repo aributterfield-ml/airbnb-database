@@ -14,7 +14,7 @@ This project explores the design and implementation of a database for Airbnb, fo
 
 ## Contents
 - **PDF Report**: Detailed documentation of the database design process, including diagrams, SQL scripts, and normalization steps.
-- **SQL Scripts**: Included in the report for table creation, procedures, and triggers. Table creation and procedures have been adapted for MySQL compatibility.
+- **SQL Scripts**: Included in the report for table creation, procedures, and triggers. Table creation and procedures SQL files have been added and adapted for MySQL compatibility.
 
 ## Key Highlights
 - Database schema tailored to Airbnb's functionalities.
