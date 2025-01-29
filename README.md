@@ -23,7 +23,4 @@ This project explores the design and implementation of a database for Airbnb, fo
   - Updating host response rates.
   - Calculating review averages.
 
-## Usage
-- Refer to the [PDF report](./Airbnb_Database_Design.pdf) for a detailed breakdown of the design process and SQL scripts.
-
 ---
