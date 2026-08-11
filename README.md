@@ -20,9 +20,14 @@ erDiagram
     Purchases ||--o| Financial_Receipt : generates
 ```
 
-[Full ER diagram (28 tables)](docs/er_diagram_dbeaver.png)
+- [Conceptual ER diagram](docs/conceptual-er-diagram.png) — original design in Chen
+  notation, showing composite, multivalued, and derived attributes
+- [Physical ER diagram](docs/physical-er-diagram.png) — generated from the
+  implemented MySQL schema in DBeaver
 
-The design uses supertype/subtype relationships in two places. `Host` shares a primary key with `User`, since a host is a user with extra attributes rather than a separate entity. `Experience` splits into `In_Person_Experience` and `Online_Experience`, which have different required fields.
+The conceptual diagram reflects the initial design; the implemented schema
+drops the Tax_Form entity and adds the Experience listing branch. Card CVV
+is also no longer stored because card networks don't allow this after authorization.
 
 ## Running it
 
