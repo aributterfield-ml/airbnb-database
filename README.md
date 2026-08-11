@@ -20,7 +20,7 @@ erDiagram
     Purchases ||--o| Financial_Receipt : generates
 ```
 
-[Full ER diagram (28 tables)](docs/er-diagram-dbeaver.png)
+[Full ER diagram (28 tables)](docs/er_diagram_dbeaver.png)
 
 The design uses supertype/subtype relationships in two places. `Host` shares a primary key with `User`, since a host is a user with extra attributes rather than a separate entity. `Experience` splits into `In_Person_Experience` and `Online_Experience`, which have different required fields.
 
