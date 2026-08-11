@@ -1,12 +1,12 @@
 CREATE TABLE User(
     User_ID INT,
     Email VARCHAR(30) NOT NULL,
-    Password VARCHAR(30) NOT NULL,
-    Government_ID INT,
+    Password_Hash CHAR(60) NOT NULL,
+    Government_ID VARCHAR(30),
     Address VARCHAR(50) NOT NULL,
-    Default_Language VARCHAR(15) DEFAULT "English",
+    Default_Language VARCHAR(15) DEFAULT 'English',
     Translation_On BOOL DEFAULT False,
-    Timezone VARCHAR(3),
+    Timezone VARCHAR(40),
     Gender VARCHAR(10),
     Default_Currency VARCHAR(10),
     Date_Joined DATE,
@@ -42,8 +42,8 @@ CREATE TABLE Property (
 );
 CREATE TABLE Payout_Method (
     Payout_ID INT,
-    Routing_Number INT NOT NULL,
-    Account_Number INT NOT NULL,
+    Routing_Number VARCHAR(20) NOT NULL,
+    Account_Number VARCHAR(34) NOT NULL,
     Account_Holder_Name VARCHAR(50) NOT NULL,
     Is_Checking BOOL NOT NULL,
     PRIMARY KEY (Payout_ID)
@@ -83,7 +83,7 @@ CREATE TABLE Host (
     Identity_Verified BOOL DEFAULT False,
     Is_Simplified_Fee BOOL DEFAULT True,
     Allow_Contributions Bool DEFAULT True,
-    Response_Rate DECIMAL(2,2),
+    Response_Rate DECIMAL(5,2),
     Num_Reviews INT DEFAULT 0,
     PRIMARY KEY (User_ID),
     FOREIGN KEY (User_ID) REFERENCES User(User_ID)
@@ -154,8 +154,7 @@ CREATE TABLE Payment_Method (
     User_ID INT,
     Zip_Code VARCHAR(50) NOT NULL,
     Country VARCHAR(100) NOT NULL,
-    CVV VARCHAR(10) NOT NULL,
-    Card_Number INT(20) NOT NULL,
+    Card_Number VARCHAR(19) NOT NULL,
     PRIMARY KEY (Payment_ID),
     FOREIGN KEY (User_ID) REFERENCES User(User_ID)  
     ON DELETE CASCADE
@@ -188,11 +187,12 @@ CREATE TABLE User_Saves_Property (
     ON DELETE CASCADE
 );
 CREATE TABLE Messages (
+    Message_ID INT,
     User1_ID INT,
     User2_ID INT,
     Contents VARCHAR(1000) NOT NULL,
-    Date DATE,
-    PRIMARY KEY (User1_ID, User2_ID),
+    Date DATETIME,
+    PRIMARY KEY (Message_ID),
     FOREIGN KEY (User1_ID) REFERENCES User(User_ID)  
     ON DELETE CASCADE,
     FOREIGN KEY (User2_ID) REFERENCES User(User_ID)  
