@@ -20,9 +20,9 @@ erDiagram
     Purchases ||--o| Financial_Receipt : generates
 ```
 
-- [Conceptual ER diagram](docs/conceptual-er-diagram.png) — original design in Chen
+- [Conceptual ER diagram](docs/conceptual_er_diagram.png) — original design in Chen
   notation, showing composite, multivalued, and derived attributes
-- [Physical ER diagram](docs/physical-er-diagram.png) — generated from the
+- [Physical ER diagram](docs/physical_er_diagram.png) — generated from the
   implemented MySQL schema in DBeaver
 
 The conceptual diagram reflects the initial design; the implemented schema
