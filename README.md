@@ -1,26 +1,75 @@
-# airbnb-database
-Airbnb-style database design, including ER diagrams, 3NF normalization, SQL schema creation, and PL/SQL procedures to support core functionalities.
-# Airbnb Style Database Design
+# Airbnb Database
 
-This repository contains a comprehensive database design for Airbnb, created as part of a Master's program coursework in Database Design.
+A relational database modeling the core Airbnb domain: users, hosts, property and experience listings, bookings, reviews, and payments. 28 tables in MySQL 8, with stored procedures for creating properties and booking purchases.
 
-## Project Overview
-This project explores the design and implementation of a database for Airbnb, focusing on:
-- **Entities and Relationships**: Definition of entities like users, hosts, properties, and transactions, along with their relationships.
-- **ER Diagram**: Enhanced Entity-Relationship diagrams to represent the database schema.
-- **Normalization**: Step-by-step transformation of the database to Third Normal Form (3NF).
-- **SQL Implementation**: Creation of tables, keys, and constraints using SQL.
-- **PL/SQL Procedures and Triggers**: Implementation of stored procedures and triggers to handle core operations like purchases and reviews.
+## Schema
 
-## Contents
-- **PDF Report**: Detailed documentation of the database design process, including diagrams, SQL scripts, and normalization steps.
-- **SQL Scripts**: Included in the report for table creation, procedures, and triggers. Table creation and procedures SQL files have been added and adapted for MySQL compatibility.
+Core booking path:
 
-## Key Highlights
-- Database schema tailored to Airbnb's functionalities.
-- Normalized relational model for data integrity and efficiency.
-- Practical triggers and procedures for real-world applications, such as:
-  - Updating host response rates.
-  - Calculating review averages.
+```mermaid
+erDiagram
+    User ||--o| Host : "can be"
+    User ||--o{ Owns_Property : owns
+    Owns_Property }o--|| Property : "listed as"
+    Property ||--o{ Property_Listing : "priced on"
+    Property_Listing ||--o{ Purchases : "booked via"
+    User ||--o{ Purchases : makes
+    Property_Listing ||--o{ Reviews : receives
+    User ||--o{ Reviews : writes
+    User ||--o{ Payment_Method : "pays with"
+    Purchases ||--o| Financial_Receipt : generates
+```
 
----
+[Full ER diagram (28 tables)](docs/er-diagram-dbeaver.png)
+
+The design uses supertype/subtype relationships in two places. `Host` shares a primary key with `User`, since a host is a user with extra attributes rather than a separate entity. `Experience` splits into `In_Person_Experience` and `Online_Experience`, which have different required fields.
+
+## Running it
+
+Requires Docker.
+
+```bash
+docker compose up -d
+```
+
+MySQL runs `schema.sql` automatically on first start. Connect on `localhost:3306`, database `airbnb`, user `root`, password `devpass`.
+
+Load the stored procedures and run the tests:
+
+```bash
+docker exec -i airbnb-db mysql -uroot -pdevpass airbnb < new_property.sql
+docker exec -i airbnb-db mysql -uroot -pdevpass airbnb < new_purchase.sql
+docker exec -i airbnb-db mysql -uroot -pdevpass airbnb < test_procedures.sql
+```
+
+To reset to a clean schema:
+
+```bash
+docker compose down -v && docker compose up -d
+```
+
+## Stored procedures
+
+`New_Property` inserts a property and assigns the next available ID.
+
+`New_Purchase` books a listing, computing the total rate from nights stayed, nightly cost, cleaning fee, and service fee, and generating a confirmation code.
+
+## Tests
+
+`test_procedures.sql` inserts sample data, calls both procedures, and prints the results with expected values in comments. Property IDs should come out 1 and 2, and the two purchases should total 675.00 and 360.00.
+
+The two listings are priced differently on purpose. An earlier version of `New_Purchase` looked up fees with `WHERE Listing_ID = Listing_ID`, where both sides resolved to the parameter rather than the column, so the condition was always true and the query returned an arbitrary listing's pricing without raising an error. With identical test data that bug is invisible.
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `schema.sql` | Table definitions |
+| `new_property.sql` | `New_Property` procedure |
+| `new_purchase.sql` | `New_Purchase` procedure |
+| `test_procedures.sql` | Assertion tests |
+| `docker-compose.yml` | Local MySQL 8 |
+
+## Known limitations
+
+`Purchases.Listing_ID` references `Property_Listing` only, so experience bookings cannot currently be recorded. Fixing this properly requires a `Listing` supertype that both listing types inherit from, with `Purchases`, `Reviews`, and `Financial_Receipt` repointed at it.
