@@ -75,6 +75,6 @@ The two listings are priced differently on purpose. An earlier version of `New_P
 | `test_procedures.sql` | Assertion tests |
 | `docker-compose.yml` | Local MySQL 8 |
 
-## Known limitations
+## Known limitation
 
-`Purchases.Listing_ID` references `Property_Listing` only, so experience bookings cannot currently be recorded. Fixing this properly requires a `Listing` supertype that both listing types inherit from, with `Purchases`, `Reviews`, and `Financial_Receipt` repointed at it.
+`Purchases.Listing_ID` references `Property_Listing` but not 'Experience_Listing', so experience bookings cannot currently be purchased. Fixing this requires a `Listing` supertype that both listing types inherit from, with `Purchases` and `Reviews` repointed at it.
