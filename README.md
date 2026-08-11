@@ -1,6 +1,6 @@
 # airbnb-database
-Database design for Airbnb, including ER diagrams, 3NF normalization, SQL schema creation, and PL/SQL procedures to support core functionalities.
-# Airbnb Database Design
+Airbnb-style database design, including ER diagrams, 3NF normalization, SQL schema creation, and PL/SQL procedures to support core functionalities.
+# Airbnb Style Database Design
 
 This repository contains a comprehensive database design for Airbnb, created as part of a Master's program coursework in Database Design.
 
