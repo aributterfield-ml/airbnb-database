@@ -1,37 +1,38 @@
-DELIMITER
+DELIMITER $$
 
 CREATE PROCEDURE New_Purchase (
-    User_ID INT,
-    Listing_ID INT,
-    Number_Of_People INT,
-    Start_Date DATE,
-    End_Date DATE
+    p_User_ID INT,
+    p_Listing_ID INT,
+    p_Number_Of_People INT,
+    p_Start_Date DATE,
+    p_End_Date DATE
 )
 BEGIN
-    DECLARE Purchase_ID INT;
-    DECLARE Cleaning_Fee DECIMAL(10,2);
-    DECLARE Service_Fee DECIMAL(10,2);
-    DECLARE Rate DECIMAL(10,2);
-    DECLARE DateDiff INT;
-    DECLARE Confirmation_Code BIGINT;
+    DECLARE New_ID INT;
+    DECLARE v_Cleaning_Fee DECIMAL(10,2);
+    DECLARE v_Service_Fee DECIMAL(10,2);
+    DECLARE v_Cost_Per_Night DECIMAL(10,2);
+    DECLARE v_Rate DECIMAL(10,2);
+    DECLARE v_Nights INT;
+    DECLARE v_Confirmation_Code INT;
 
     -- Assign Purchase_ID
-    SET Purchase_ID = (SELECT COUNT(Purchases_ID) + 1 FROM Purchases);
+    SET New_ID = (SELECT COALESCE(MAX(Purchase_ID),0) + 1 FROM Purchases);
 
-    -- Calculate DateDiff
-    SET DateDiff = DATEDIFF(End_Date, Start_Date);
+    -- Calculate number of nights
+    SET v_Nights = DATEDIFF(p_End_Date, p_Start_Date);
 
-    -- Retrieve Service Fee and Cleaning Fee
-    SELECT Service_Fee, Cleaning_Fee
-    INTO Cleaning_Fee, Service_Fee
+    -- Retrieve nightly cost, cleaning fee and service fee
+    SELECT Cleaning_Fee, Service_Fee, Cost_Per_Night
+    INTO v_Cleaning_Fee, v_Service_Fee, v_Cost_Per_Night
     FROM Property_Listing
-    WHERE Listing_ID = Listing_ID;
+    WHERE Listing_ID = p_Listing_ID;
 
     -- Calculate Rate
-    SET Rate = (DateDiff * Cost_Per_Night) + Cleaning_Fee + Service_Fee;
+    SET v_Rate = (v_Nights * v_Cost_Per_Night) + v_Cleaning_Fee + v_Service_Fee;
 
     -- Generate Confirmation Code
-    SET Confirmation_Code = ROUND(RAND() * 1000000000000);
+    SET v_Confirmation_Code = ROUND(RAND() * 1000000000);
 
     -- Insert into Purchases table
     INSERT INTO Purchases (
@@ -44,13 +45,15 @@ BEGIN
         Start_Date,
         End_Date
     ) VALUES (
-        Purchase_ID,
-        User_ID,
-        Listing_ID,
-        Confirmation_Code,
-        Number_Of_People,
-        Rate,
-        Start_Date,
-        End_Date
+        New_ID,
+        p_User_ID,
+        p_Listing_ID,
+        v_Confirmation_Code,
+        p_Number_Of_People,
+        v_Rate,
+        p_Start_Date,
+        p_End_Date
     );
-END
+END$$
+
+DELIMITER ;

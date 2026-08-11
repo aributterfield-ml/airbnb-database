@@ -1,3 +1,5 @@
+DELIMITER $$
+
 CREATE PROCEDURE New_Property (
     State_or_Area VARCHAR(20),
     City VARCHAR(20),
@@ -13,8 +15,8 @@ CREATE PROCEDURE New_Property (
     Service_Fee DECIMAL(10,2)
   )
 BEGIN
-    DECLARE Property_ID INT;
-    SELECT (COUNT(Property_ID)+1) INTO Property_ID
+    DECLARE New_ID INT;
+    SELECT (COALESCE(MAX(Property_ID),0)+1) INTO New_ID
     FROM Property;
 INSERT INTO Property
     (Property_ID,
@@ -22,26 +24,28 @@ INSERT INTO Property
     City,
     Street_Address,
     Country,
-    Poperty_Type,
+    Property_Type,
     Num_Bedrooms,
-    Max_Guest,
+    Max_Guest_Num,
     Num_Beds,
     Num_Baths,
     Cleaning_Fee,
     Cost_per_Night,
     Service_Fee)
 VALUES
-    (Property_ID,
+    (New_ID,
     State_or_Area,
     City,
     Street_Address,
     Country,
-    Poperty_Type,
+    Property_Type,
     Num_Bedrooms,
-    Max_Guest,
+    Max_Guest_Num,
     Num_Beds,
     Num_Baths,
     Cleaning_Fee,
     Cost_per_Night,
     Service_Fee);
-END
+END$$
+
+DELIMITER ;
